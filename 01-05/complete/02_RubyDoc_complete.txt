@@ -22,14 +22,21 @@ here are the methods that symbol responds to that string does not:
 symbol.methods - string.methods #=>
 [:id2name, :to_proc]
 
+some other symbol methods are:
+[:nil?, :length]
+
 
 Strings: 
 
 :upcase! - will change the original object text to all uppercase letters
+
 puts string.upcase! #=> "HELLO"
 
+
+
 :gsub - will create another object that replaces the first argment with 
-the second argument in the new string object  
+the second argument in the new string object. 
+
 puts string.gsub("E","a") #=> "HaLLO"
 puts string #=> "HELLO" - has a different object ID
 
@@ -37,13 +44,31 @@ puts string #=> "HELLO" - has a different object ID
 
 Symbols:
 
-:id2name - changes the symbol object to a string object
-puts symbol.id2name #=> "hello"
-puts symbol #=> :hello
-puts symbol.id2name.class #=> String
+:id2name - creates a new string object based on the symbol object. not sure when you 
+would use this, maybe in a situation where you need to based multiple objects off of 
+a symbol, you can use id2name?
 
-:to_proc - will convert a symbol object to a Proc object which allows you to cache 
-a block in a variable object
+puts sym = symbol.id2name #=> "hello"
+puts syn.object_id #=> 70117111523160
+puts sym.class #=> String
+puts symbol #=> :hello
+puts symbol.object_id #=> 391528
+
+
+
+:nil? - tests weather an object is equal to nil. returns boolean based on comparison. 
+You can build conditionals off of testing for a nil value.
+
+:nil.nil? #=> True
+:zero = 0
+zero.nil? #=> False
+
+
+
+:length - returns the number of characters in the symbol. anytime you need to count characters, 
+you would use the length method.
+
+:symbol.length #=> 6 
 
 
 

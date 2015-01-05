@@ -1,0 +1,24 @@
+man kill
+
+kill will terminate a process and you can usually use it in situations where a 
+process is frozen, taking to long to complete, or maybe you just want to stop 
+something from running.
+
+you can see the running processes by using a command like ps aux or top and you 
+can use kill by passing it the PID of the process you want to terminate.
+
+here are some optional commands you can pass before the PID:
+ 1       HUP  (hang up)
+ 2       INT  (interrupt)
+ 3       QUIT (quit)
+ 6       ABRT (abort)
+ 9       KILL (non-catchable, non-ignorable kill)
+ 14      ALRM (alarm clock)
+ 15      TERM (software termination signal)
+
+
+You can get a list of all signals by hitting man signal. you can pass kill -signal_name or 
+-signal_number to tell kill how to end a specific signal
+
+examples: kill -3 PID or kill -KILL PID
+
