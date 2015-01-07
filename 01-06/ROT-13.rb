@@ -54,7 +54,7 @@ p ROT_TABLE[0].find_index('E'.to_sym)
 p 'd' == 'd'.upcase
 p 'd' == 'd'.downcase
 
-
+test = 'test'
 encode('datTTT')
 
 

@@ -53,7 +53,7 @@ def decode(str)
   decode_NATO.join("")
 end
 
-
+#comment
 
 
 p encode('klnadv231')
