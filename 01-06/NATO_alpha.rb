@@ -27,7 +27,7 @@ NATO = {:A => :Adam, :B => :Boy, :C => :Charles, :D => :David, :E => :Edward, :F
 
 
 #regular expresion to check for a number value
-IS_A_NUMBER = /^[\d]+(\.[\d]+){0,1}$/
+IS_A_NUMBER = /[[:digit:]]/
 
 
 
@@ -53,9 +53,8 @@ def decode(str)
   decode_NATO.join("")
 end
 
-#comment
 
 
-p encode('klnadv231')
+p encode('klnadv231jkoqkeanfonls')
 
 p decode("King Lincoln Nora Adam David Victor TwoTurtleDoves ThreeRedHens OneToMany")

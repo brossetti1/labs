@@ -34,7 +34,6 @@ ROT_TABLE = [[:A,:B,:C,:D,:E,:F,:G,:H,:I,:J,:K,:L,:M,:N,:O,:P,:Q,:R,:S,:T,:U,:V,
 def encode(input)
   input.to_str.each_char do |char| 
     p get_index(char)
-    binding.pry
   end
 end
 
@@ -45,16 +44,16 @@ end
 
 
 def get_index(char)
-  if char == char.upcase ? ROT_TABLE[1].find_index(char.to_sym) : ROT_TABLE[0].find_index(char.to_sym); end
+  char == char.upcase ? ROT_TABLE[0].find_index(char.to_sym) : ROT_TABLE[1].find_index(char.to_sym)
 end
 
-p get_index('D')
-p ROT_TABLE[1].find_index('t'.to_sym)
-p ROT_TABLE[0].find_index('E'.to_sym)
-p 'd' == 'd'.upcase
-p 'd' == 'd'.downcase
-
-test = 'test'
+#p get_index('D')
+#p ROT_TABLE[1].find_index('t'.to_sym)
+#p ROT_TABLE[0].find_index('E'.to_sym)
+#p 'd' == 'd'.upcase
+#p 'd' == 'd'.downcase
+#
+#test = 'test'
 encode('datTTT')
 
 
