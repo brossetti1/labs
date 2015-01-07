@@ -26,7 +26,6 @@ def hangman(words)
   until finished?(turn_count, guessed, answer)
     guess = prompt_player(turn_count, guessed, answer, player_answer)
     guessed.add(guess)
-    binding.pry
     unless answer.include?(guess)
       turn_count -= 1
     end
@@ -72,7 +71,7 @@ def complete_word(answer, guesses)
 end
 
 def check(input)
-  if /[[:alpha:]]/ =~ input && input.chomp.length == 1
+  if /[[:alpha:]]/ =~ input && input.chomp.length == 1 
     input.to_str.chomp
   else
     p "we need a letter."
