@@ -29,32 +29,64 @@ require 'pry'
 ROT_TABLE = [[:A,:B,:C,:D,:E,:F,:G,:H,:I,:J,:K,:L,:M,:N,:O,:P,:Q,:R,:S,:T,:U,:V,:W,
             :X,:Y,:Z],[:a,:b,:c,:d,:e,:f,:g,:h,:i,:j,:k,:l,:m,:n,:o,:p,:q,:r,:s,:t,
             :u,:v,:w,:x,:y,:z]]
+#ROT_TABLE array lengths = 26 -> 0 - 25
+
+def encode
+  p "pass a word to encode into ROT13, characters will be ignored unless they are spaces or alphabetic"
+  input = gets
+  rot13_encode_word = []
+  input.gsub(/[^\p{Alpha}\p{Blank}-]/, '').each_char do |char| 
+    rot13_index = locate_ROT13_index(char, 'encode')
+    rot13_encode_word << get_ROT_array(char)[rot13_index].to_s unless char == " "
+    rot13_encode_word << char if char == " "
+  end
+  rot13_encode_word.join("").strip
+end
 
 
-def encode(input)
-  input.to_str.each_char do |char| 
-    p get_index(char)
+def decode
+  p "pass a word to decocde into ROT13, characters will be ignored unless they are spaces or alphabetic"
+  input = gets
+  rot13_decode_word = []
+  input.gsub(/[^\p{Alpha}\p{Blank}-]/, '').each_char do |char|
+    rot13_index = locate_ROT13_index(char, 'decode')
+    rot13_decode_word << get_ROT_array(char)[rot13_index].to_s unless char == " "
+    rot13_decode_word << char if char == " "
+  end
+  rot13_decode_word.join("").strip
+end
+
+
+def get_letter_index(char)
+  get_ROT_array(char).find_index(char.to_sym) unless char == " "
+end
+
+def get_ROT_array(char)
+  char == char.upcase ? ROT_TABLE[0] : ROT_TABLE[1] unless char == " "
+end
+
+def locate_ROT13_index(char, cypher)
+  return " " if char == " "
+  if cypher == 'encode'
+    if get_letter_index(char) + 13 > 25
+      get_letter_index(char) + 13 - 26
+    else
+      get_letter_index(char) + 13
+    end
+  else
+    if get_letter_index(char) - 13 < 0
+      26 - (13 - get_letter_index(char))
+    else
+      get_letter_index(char) - 13
+    end
   end
 end
 
 
-def decode(input)
-
-end
+p encode
 
 
-def get_index(char)
-  char == char.upcase ? ROT_TABLE[0].find_index(char.to_sym) : ROT_TABLE[1].find_index(char.to_sym)
-end
-
-#p get_index('D')
-#p ROT_TABLE[1].find_index('t'.to_sym)
-#p ROT_TABLE[0].find_index('E'.to_sym)
-#p 'd' == 'd'.upcase
-#p 'd' == 'd'.downcase
-#
-#test = 'test'
-encode('datTTT')
+p decode
 
 
-decode('bootie')
+
