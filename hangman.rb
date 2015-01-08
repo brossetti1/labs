@@ -79,14 +79,6 @@ def check(input)
   end
 end
 
-##def check_guessed(letter, guessed)
-##  if guessed.include?(letter)
-##    p "you already guessed that"
-##    check(gets)
-##  else
-##    skip
-##  end
-##end
 
 
 

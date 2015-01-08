@@ -31,31 +31,17 @@ ROT_TABLE = [[:A,:B,:C,:D,:E,:F,:G,:H,:I,:J,:K,:L,:M,:N,:O,:P,:Q,:R,:S,:T,:U,:V,
             :u,:v,:w,:x,:y,:z]]
 #ROT_TABLE array lengths = 26 -> 0 - 25
 
-def encode
-  p "pass a word to encode into ROT13, characters will be ignored unless they are spaces or alphabetic"
+def rot13_encode_or_decode(cypher)
+  p "pass a word to #{cypher} into ROT13, characters will be ignored unless they are spaces or alphabetic"
   input = gets
   rot13_encode_word = []
   input.gsub(/[^\p{Alpha}\p{Blank}-]/, '').each_char do |char| 
-    rot13_index = locate_ROT13_index(char, 'encode')
+    rot13_index = locate_ROT13_index(char, cypher)
     rot13_encode_word << get_ROT_array(char)[rot13_index].to_s unless char == " "
     rot13_encode_word << char if char == " "
   end
   rot13_encode_word.join("").strip
 end
-
-
-def decode
-  p "pass a word to decocde into ROT13, characters will be ignored unless they are spaces or alphabetic"
-  input = gets
-  rot13_decode_word = []
-  input.gsub(/[^\p{Alpha}\p{Blank}-]/, '').each_char do |char|
-    rot13_index = locate_ROT13_index(char, 'decode')
-    rot13_decode_word << get_ROT_array(char)[rot13_index].to_s unless char == " "
-    rot13_decode_word << char if char == " "
-  end
-  rot13_decode_word.join("").strip
-end
-
 
 def get_letter_index(char)
   get_ROT_array(char).find_index(char.to_sym) unless char == " "
@@ -73,20 +59,23 @@ def locate_ROT13_index(char, cypher)
     else
       get_letter_index(char) + 13
     end
-  else
+  elsif cypher == 'decode'
     if get_letter_index(char) - 13 < 0
       26 - (13 - get_letter_index(char))
     else
       get_letter_index(char) - 13
     end
+  else
+    p "we need you to indicate if you want to encode or decode into ROT13"
+    rot13_encode_or_decode(cypher)
   end
 end
 
 
-p encode
+p rot13_encode_or_decode('encode')
 
 
-p decode
+p rot13_encode_or_decode('decode')
 
 
 
