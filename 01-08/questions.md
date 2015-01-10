@@ -1,3 +1,6 @@
+questions 01-08
+
+
 In this assignment, we'll implement a version of tic-tac-toe that we can play from the command line.
 You should push what you have by Monday at 8am.
 **Incomplete work that is on time and later refined is preferred to late work that is complete and bug-free.**
