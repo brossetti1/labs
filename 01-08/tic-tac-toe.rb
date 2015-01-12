@@ -1,5 +1,5 @@
 require 'pry'
-#require_relative 'game_art'
+require_relative 'game_art'
 
 ######
 #
@@ -40,102 +40,165 @@ require 'pry'
 #################################################################
 ####################### User interface ##########################
 #################################################################
+   #0
+BOARD = [['1','2','3'],
+              #1
+         ['4','5','6'],
+              #2
+         ['7','8','9']]
+
 
 def start_game
   load_start_screen
-  display_board
+  #3.times {|x| puts}
+  BOARD.each {|piece| print piece, "\n"}
+  #10.times {|x| puts}
 end
 
 def load_start_screen
-  display_art
-  "puts: hit any button to continue"
-  key_down_any_button #function for hitting any button as input wihtout "gets"
-  choose_mode #when user hits a button
+  game_title
+  center("hit any button to continue")
+  key_down_any_button
+  choice = computer_or_human_oppoenet?
+  choose_mode if choice == 2#when user hits a button
 end
 
-def key_down_any_button
-  #function for hitting any button as input wihtout "gets"
-end
-
-def choose_mode
-  "which mode would you like to play?"
-  #query_user = validate(gets)
-  #computer_or_human_oppoenet? if choose_mode == 'Easy' || 'Normal'
-end
-
-
-def validate(user_input, options)
-  selection_options = [1,2,3,4]
-  game_options = {1 => 'Easy', 2 => 'Normal', 3 => 'Hard', 4 => 'Nightmare'}
-  oponnent_options = {1 => 'Human', 2 => 'Computer'}
-  menu_response unless selection_options.include?(user_input)
-
-end
-
-def menu_response
-  p "we need you to select the number option "
-  #validate(gets)
-end
-
-def computer_or_human_oppoenet?
-  puts 'choose the setup:   1) Human   2)Computer'
-  #query_user = validate(gets)
-  key_down_any_button #get function for hitting any button as input wihtout "gets"
-end
-
-
-
-
-
-
-def play_game
-  until check_winner(board)
-    player1_turn
-    player2_turn
-    refresh_board
-    display_board
+#not sure if this works yet....
+def center(text, space = "")
+  if space == 'puts'
+    puts
+    print " "*((164-text.chomp.size)/2)
+    print text
+    puts
+  elsif space == 'align_middle'
+    print " "*((164-text.chomp.size)/2)
+    print text
+  else
+    print " "*((164-text.chomp.size)/2)
+    print text
+    puts
   end
 end
 
-def three_in_a_row? (index)
-  index.uniq.length == 1 && !index.include?('')
+#curosey of Matz - http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/2999
+def key_down_any_button
+  begin
+    system("stty raw -echo")
+    str = STDIN.getc
+  ensure
+    system("stty -raw")
+    puts `clear`
+  end
 end
 
-def player1_turn
-
+def choose_mode
+  refresh_screen
+  options = {1 => 'Easy', 2 => 'Normal', 3 => 'Hard', 4 => 'Nightmare'}
+  center("select the number corresponding to which mode you would like to play?")
+  print "                                                          "
+  options.each {|k,v| print "#{k})  #{v}   "}
+  center("please select a number option",'puts')
+  query_user = validate(gets.to_i, [1,2,3,4], options)
+  options[query_user]
 end
 
-def player2_turn
 
+def validate(user_input, validate, options = {})
+  if validate.include?(user_input)
+    return user_input
+  else
+    refresh_screen
+    center("select the number corresponding to which mode you would like to play?") if validate.length == 4
+    print "                                                         " if validate.length == 4
+    print "                                                                       " if validate.length == 2
+    options.each {|k,v| print "#{k}) #{v}   "}
+    center("please select a number option",'puts')
+    print "we need you to select the number option: "
+    validate(gets.to_i, validate, options)
+  end
+end
+
+def computer_or_human_oppoenet?
+  refresh_screen
+  options = {1 => 'Human', 2 => 'Computer'}
+  #print "                                                                  "
+  center('1) Human   2) Computer')
+  query_user = validate(gets.to_i, [1,2], options)
+  #key_down_any_button #get function for hitting any button as input wihtout "gets"
+end
+
+def display_board
+  refresh_screen
+  puts show_board.each {|part| part}
 end
 
 def refresh_board
 
 end
 
-
-def board
-                #0
-  board = [['1','2','3'],
-                #1
-           ['4','5','6'],
-                #2
-           ['7','8','9']]
+def refresh_screen
+  puts `clear`
+  game_title
 end
 
-def check_winner(board)
+def play_game
+  until check_winner
+    player1_turn
+    BOARD.each {|piece| print piece, "\n"}
+    player2_turn
+    BOARD.each {|piece| print piece, "\n"}
+  end
+end
+
+def player1_turn
+  players_pick('X')
+end
+
+def player2_turn
+  players_pick('O')
+end
+
+def players_pick(player)
+  index_reference = [[1,0],[2,1],[3,2],[4,0],[5,1],[6,2],[7,0],[8,1],[9,2]]
+  player == 'X' ? current_player = "player X" : current_player = "player O"
+  puts "#{current_player}, pick any number between 1-9 as referenced on the board"
+  pick = check_player_pick(gets.to_i - 1, index_reference, player) # 3 == 2 == [3,[0,2]]
+end
+
+
+def check_player_pick(pick, picks, player)
+  play_index = picks[pick][1] unless pick > 9
+  board_ref = BOARD[0] if [1,2,3].include?(pick+1)
+  board_ref = BOARD[1] if [4,5,6].include?(pick+1)
+  board_ref = BOARD[2] if [7,8,9].include?(pick+1)
+  if pick == -1 || pick > 9
+    puts "you need to select a number between 1 and 9 to play"
+    check_player_pick(gets.to_i-1, picks, player)
+  elsif ["X","O"].include?(board_ref[play_index])
+    puts "you have to pick an open spot on the board"
+    check_player_pick(gets.to_i - 1, picks, player)  
+  elsif picks[pick].include?(pick+1) && !["X","O"].include?(board_ref[play_index])
+    board_ref[play_index] = player
+  end
+end
+
+def check_winner
 diagonal_159 = []
 diagonal_357 = []
 winning_combinations = []
-  board.each_with_index do |row, i|
+  BOARD.each_with_index do |row, i|
     winning_combinations << row
     diagonal_357 << row.reverse[i]
-    diagonal_159 << board[i][i]
-    winning_combinations << board.transpose[i]
+    diagonal_159 << BOARD[i][i]
+    winning_combinations << BOARD.transpose[i]
   end
 winning_combinations << diagonal_159
 winning_combinations << diagonal_357
 winning_combinations.map {|combo| three_in_a_row?(combo)}.include?(true) 
+end
+
+def three_in_a_row? (index)
+  index.uniq.length == 1 && !index.include?('*')
 end
 
 
@@ -144,12 +207,24 @@ def play_tic_tac_toe
   play_game
 end
                    #0
-test_board = [['1','6','3'],
-                   #1
-              ['4','5','6'],
-                   #2
-              ['7','8','9']]
+#test_board = [['*','*','*'],
+#             #  0   1   2
+#                   #1
+#              ['*','*','*'],
+#             #  0   1   2
+#                   #2
+#              ['*','*','*']]
+#             #  0   1   2
+#
 
 
-check_winner(test_board)
+#display the board
+#make computer opponents - Easy, Normal, Hard
+#clean up
+picks = [1,2,3,4,5,6,7,8,9]
+index = [[0,0],[0,1],[0,2],[1,0],[1,1],[1,2],[2,0],[2,1],[2,2]]
+
+play_tic_tac_toe
+
+
 

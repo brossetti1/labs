@@ -1,4 +1,19 @@
-## BEWARE THE SEMICOLON!
+######
+#
+#  hangman Day 3 for IronYard Spring Jan 06, 2015
+#
+#  Programmer:    Brian Rossetti
+#  OS:            Yosemite 10.10.1
+#  System:        Intel Core i5
+#  Compiler:      ruby 2.1.3 p242 (2014-09-19 revision 47630) [x86_64-darwin13.0]
+#
+#  Purpose
+#
+#  Brit constructed the first bit of hangman and we had to finish the game. 
+#
+#
+######
+
 
 require 'pry'
 require 'set'
@@ -33,23 +48,31 @@ def hangman(words)
   game_over(answer, guessed) # TODO: Do I need an argument?
 end
 
+
+
 def prompt_player(count, guessed, answer, player_answer)
-  p "whats yo guess? word: you have #{count} turns left  word: #{player_answer}"
-  player_guess = check(gets)
+  p "whats yo guess? you have #{count} turns left  word: #{player_answer}"
+  player_guess = check($stdin.gets)
   replace_index_with_letter(player_answer, answer, player_guess, guessed)
   player_guess
 end
 
+
+
 def finished? (turns, guesses, answer)
-  turns.zero? || complete_word(answer, guesses)
+  turns.zero? || complete_word?(answer, guesses)
 end
+
+
 
 def greeting(attempts)
   puts 'Welcome to hangman, you have #{attempts} attempts to guess the word'
 end
 
+
+
 def game_over(answer, guesses)
-  if complete_word(answer, guesses)
+  if complete_word?(answer, guesses)
     p "you won, high five"
   else
     p "you lose"
@@ -60,22 +83,26 @@ end
 
 def replace_index_with_letter(player_answer, answer, player_guess, guessed)
   if answer.include?(player_guess) && !guessed.include?(player_guess)
-    answer.each_char.each_with_index {|letter, i| player_answer[i] = letter if letter == player_guess}
+    answer.chars.each_with_index {|letter, i| player_answer[i] = letter if letter == player_guess}
   else
     player_guess
   end
 end
 
-def complete_word(answer, guesses)
+
+
+def complete_word?(answer, guesses)
   answer.chars.all? { |l| guesses.include?(l) }
 end
+
+
 
 def check(input)
   if /[[:alpha:]]/ =~ input && input.chomp.length == 1 
     input.to_str.chomp
   else
     p "we need a letter."
-    check(gets)
+    check($stdin.gets)
   end
 end
 

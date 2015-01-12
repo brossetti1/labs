@@ -8,3 +8,5 @@
       and tells them the word they were trying to guess.
     * **BONUS**: Prompt the player to play another game and continue until they quit.
     * **BONUS**: ASCII art everywhere! ASCII logo, ASCII hangman status!
+
+questions 01-07
