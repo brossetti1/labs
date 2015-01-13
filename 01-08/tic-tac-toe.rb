@@ -13,7 +13,7 @@ require_relative 'game_art'
 #
 #  Purpose
 #
-#  * Running `ruby tic-tac-toe.rb` should play a game of tic-tac-toe in the terminal.
+#  * Running `ruby tic-tac-toe.rb` should play a game of tic-tac-toe ind the terminal.
 #  
 #  ## Easy Mode
 #  
