@@ -33,13 +33,6 @@ require_relative 'game_art'
 #
 ######
 
-#patorjk.com text to ascii art - google
-
-
-
-#################################################################
-####################### User interface ##########################
-#################################################################
    #0
 BOARD = [['1','2','3'],
               #1
@@ -47,11 +40,10 @@ BOARD = [['1','2','3'],
               #2
          ['7','8','9']]
 
-
 def start_game
   load_start_screen
   #3.times {|x| puts}
-  BOARD.each {|piece| print piece, "\n"}
+  #BOARD.each {|piece| print piece, "\n"}
   #10.times {|x| puts}
 end
 
@@ -59,8 +51,6 @@ def load_start_screen
   game_title
   center("hit any button to continue")
   key_down_any_button
-  choice = computer_or_human_oppoenet?
-  choose_mode if choice == 2#when user hits a button
 end
 
 #not sure if this works yet....
@@ -93,22 +83,30 @@ end
 
 def choose_mode
   refresh_screen
-  options = {1 => 'Easy', 2 => 'Normal', 3 => 'Hard', 4 => 'Nightmare'}
-  center("select the number corresponding to which mode you would like to play?")
-  print "                                                          "
-  options.each {|k,v| print "#{k})  #{v}   "}
-  center("please select a number option",'puts')
-  query_user = validate(gets.to_i, [1,2,3,4], options)
+  options = {1 => 'Human', 2 => 'Computer'}
+  center('1) Human   2) Computer')
+  query_user = validate(gets.to_i, [1,2], options)
+  if query_user == 2
+    options = {1 => 'Easy', 2 => 'Normal', 3 => 'Hard', 4 => 'Nightmare'}
+    center("select the number corresponding to which mode you would like to play?")
+    print "                                                          "
+    options.each {|k,v| print "#{k})  #{v}   "}
+    center("please select a number option",'puts')
+    query_user = validate(gets.to_i, [1,2,3,4], options)
+  end
   options[query_user]
 end
 
+def computer_or_human(choose_mode)
+  choose_mode
+end
 
 def validate(user_input, validate, options = {})
   if validate.include?(user_input)
     return user_input
   else
     refresh_screen
-    center("select the number corresponding to which mode you would like to play?") if validate.length == 4
+    center("select the number corresponding to which mode you would like to play") if validate.length == 4
     print "                                                         " if validate.length == 4
     print "                                                                       " if validate.length == 2
     options.each {|k,v| print "#{k}) #{v}   "}
@@ -118,51 +116,50 @@ def validate(user_input, validate, options = {})
   end
 end
 
-def computer_or_human_oppoenet?
-  refresh_screen
-  options = {1 => 'Human', 2 => 'Computer'}
-  #print "                                                                  "
-  center('1) Human   2) Computer')
-  query_user = validate(gets.to_i, [1,2], options)
-  #key_down_any_button #get function for hitting any button as input wihtout "gets"
-end
-
 def display_board
   refresh_screen
   puts show_board.each {|part| part}
 end
 
-def refresh_board
-
-end
-
-def refresh_screen
+def refresh_screen(board = "")
   puts `clear`
   game_title
+  BOARD.each {|piece| print piece, "\n"} if board == 'board'
 end
 
 def play_game
+  start_game
+  mode = computer_or_human(choose_mode)
   until check_winner
-    player1_turn
+    player1_turn(mode)
     BOARD.each {|piece| print piece, "\n"}
-    player2_turn
+    break if check_winner
+    player2_turn(mode)
     BOARD.each {|piece| print piece, "\n"}
   end
 end
 
-def player1_turn
-  players_pick('X')
+def player1_turn(mode)
+  players_pick('X', 'Human')
 end
 
-def player2_turn
-  players_pick('O')
+def player2_turn(mode)
+  players_pick('O', mode)
+
 end
 
-def players_pick(player)
+def players_pick(player, mode)
   index_reference = [[1,0],[2,1],[3,2],[4,0],[5,1],[6,2],[7,0],[8,1],[9,2]]
   player == 'X' ? current_player = "player X" : current_player = "player O"
+  refresh_screen('board')
   puts "#{current_player}, pick any number between 1-9 as referenced on the board"
-  pick = check_player_pick(gets.to_i - 1, index_reference, player) # 3 == 2 == [3,[0,2]]
+  if mode != "Human" 
+    pick = computer_pick(mode)
+    check_player_pick(pick,index_reference,player)
+    binding.pry
+  else
+    pick = check_player_pick(gets.to_i - 1, index_reference, player) # 3 == 2 == [3,[0,2]]
+  end
 end
 
 
@@ -172,9 +169,11 @@ def check_player_pick(pick, picks, player)
   board_ref = BOARD[1] if [4,5,6].include?(pick+1)
   board_ref = BOARD[2] if [7,8,9].include?(pick+1)
   if pick == -1 || pick > 9
+    refresh_screen('board')
     puts "you need to select a number between 1 and 9 to play"
     check_player_pick(gets.to_i-1, picks, player)
   elsif ["X","O"].include?(board_ref[play_index])
+    refresh_screen('board')
     puts "you have to pick an open spot on the board"
     check_player_pick(gets.to_i - 1, picks, player)  
   elsif picks[pick].include?(pick+1) && !["X","O"].include?(board_ref[play_index])
@@ -182,30 +181,38 @@ def check_player_pick(pick, picks, player)
   end
 end
 
+def computer_pick(mode)
+  if mode == 'Easy'
+    picks = (1..9).to_a
+    picks.shuffle.pop
+  elsif mode == 'Normal'
+    #stuff
+  elsif mode == 'Hard'
+    #stuff
+  else
+    #stuff
+  end
+end
+
 def check_winner
 diagonal_159 = []
 diagonal_357 = []
 winning_combinations = []
-  BOARD.each_with_index do |row, i|
-    winning_combinations << row
-    diagonal_357 << row.reverse[i]
-    diagonal_159 << BOARD[i][i]
-    winning_combinations << BOARD.transpose[i]
-  end
+BOARD.each_with_index do |row, i|
+  winning_combinations << row
+  diagonal_357 << row.reverse[i]
+  diagonal_159 << BOARD[i][i]
+  winning_combinations << BOARD.transpose[i]
+end
 winning_combinations << diagonal_159
 winning_combinations << diagonal_357
-winning_combinations.map {|combo| three_in_a_row?(combo)}.include?(true) 
+winning_combinations.map {|combo| three_in_a_row?(combo)}.include?(true)
 end
 
 def three_in_a_row? (index)
   index.uniq.length == 1 && !index.include?('*')
 end
 
-
-def play_tic_tac_toe
-  start_game
-  play_game
-end
                    #0
 #test_board = [['*','*','*'],
 #             #  0   1   2
@@ -218,13 +225,7 @@ end
 #
 
 
-#display the board
-#make computer opponents - Easy, Normal, Hard
-#clean up
-picks = [1,2,3,4,5,6,7,8,9]
-index = [[0,0],[0,1],[0,2],[1,0],[1,1],[1,2],[2,0],[2,1],[2,2]]
-
-play_tic_tac_toe
+play_game
 
 
 
