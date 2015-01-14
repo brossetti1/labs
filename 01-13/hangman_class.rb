@@ -31,7 +31,8 @@ class Player
   attr_reader :answer
   attr_accessor :guessed, :prompt, :game_word
 
-  def initialize(words)
+  def initialize(words, game_name="")
+    @game_name = game_name
     @guessed = Set.new
     @turn_count = ARGV.empty? ? 6 : ARGV[0].to_i
     @answer = words.sample
@@ -54,9 +55,10 @@ class Player
   end
 
   def check(guess)
-    until guess =~ /^[a-z]$/i
+    until guess =~ /^[a-z]$/i && !@guessed.include?(guess)
+      binding.pry
       if @guessed.include?(guess)
-        puts 'come on you already picked that'
+        puts 'come on you already picked that one, pick again'
         guess = check(gets.chomp)
       else
         puts 'we need one letter.... bucko'
@@ -71,7 +73,7 @@ class Player
   end
 
   def finished?
-     word_complete? || @turn_count == 0
+    word_complete? || @turn_count == 0
   end
 
   def game_over
@@ -80,6 +82,11 @@ class Player
     else
       puts 'sorry you lost, hope your not sad'
     end
+  end
+
+  def take_turn
+    puts "your turn on game: #{@game_name}"
+    prompt_player
   end
 
   #curosey of Matz - http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/2999
@@ -93,18 +100,26 @@ class Player
     end
   end
 
-  def play_game
-    puts "Welcome to hangman, press any button to continue"
+  def greeting
+    puts "welcome to #{@game_name} of hangman, press any key to continue"
     key_down_any_button
-    until finished?
-      prompt_player
-    end
-    game_over
+  end
+
+  def play_game
+    take_turn
+    puts "word: #{@game_word}\n\n\n"
+    return game_over if finished?
   end
 end
 
 
-game1 = Player.new(words)
-game2 = Player.new(words)
-game1.play_game
-game2.play_game
+game1 = Player.new(words, 'Game 1')
+game2 = Player.new(words, 'Game 2')
+
+game1.greeting
+game2.greeting
+until game1.finished? && game2.finished?
+  game1.play_game
+  game2.play_game
+end
+
