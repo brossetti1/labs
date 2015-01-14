@@ -206,7 +206,6 @@ def play_game(board)
     count += 1
     refresh_screen(board)
     break if winner?(board) || finished?(board)
-    binding.pry
     choose_square(board, player2, configuration, count)
     count += 1
     refresh_screen(board)
@@ -226,7 +225,7 @@ end
 # 4  |  5  |   6       3  |  4  |  5
 # 7  |  8  |   9       6  |  7  |  8
 def board
-  ['1','O','3','X','5','O','7','X','9']
+  ['X','X','O','O','O','6','X','8','9']
 end
 
 def find_corners(picks)
@@ -236,8 +235,8 @@ end
 
 counts = Hash.new(0)
 win_num_count = WINS.flatten
-board.each {|sqr| counts[sqr] += 1 unless sqr == 'X' || sqr == 'O'}
-p counts
+win_num_count.each {|sqr| counts[sqr] += 1 unless sqr == 'X' || sqr == 'O'}
+#p counts
 board_remain = board.map {|spot| spot.scan(/\d/)}.flatten
 p board_remain
 x = WINS
@@ -249,6 +248,23 @@ end
 #play_game(board)
 
 
+def check_wins
+  hsh = Hash.new(:test => 0)
+  board_remain = board.reject {|spot| spot.to_i == 0} 
+  p board_remain
+  p WINS
+  WINS.each_with_index do |ary, i|
+    board_remain.each do|spot|
+      p ary, i, spot
+      p board_remain.include?(i.to_s)
+      p hsh[i.to_s.to_sym] = [] if board_remain.include?(i.to_s)
+    end 
+  end
+  #  binding.pry
+  #  
+  #  hsh[i.to_s.to_sym] << [spot-1, ary] if ary.include?(spot-1.to_i) == true
+  #end
+  hsh
+end
 
-
-
+p check_wins
