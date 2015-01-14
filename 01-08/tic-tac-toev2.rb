@@ -77,6 +77,7 @@ end
 def prompt(text, options, error_msg, keep_text=false)
   center(text)
   query_user = gets.chomp
+
   until query_user =~ /^[#{options.join}]$/i
     center(error_msg)
     query_user = gets.chomp
@@ -113,46 +114,77 @@ def choose_letter
 end
 
 def choose_square(board, player, configuration, count)
-  if count.odd? 
-    pick = prompt("player #{player}, pick an open number on the board", (1..9).to_a,
-                  "you need to pick an open spot on the board")
-  else
+  #binding.pry
+  prompt_text = "player #{player}, pick an open number on the board"
+  open_board_spots = board.reject {|spot| spot.to_i == 0}
+  error_text = '!!!!!!!!!!!you need to pick an open spot on the board!!!!!!!!!!!'
+  if configuration[0] == 1
+    pick = prompt(prompt_text, open_board_spots, error_text)
+  elsif count.odd?
+    pick = prompt(prompt_text, open_board_spots, error_text)
+  elsif count.even?
     pick = bot_choice(board, configuration).to_i
   end
   board[pick-1] = player
 end
-
+#open board spots --- board.map {|spot| spot.scan(/\d/)}.flatten
+#WINS = [[0,3,6], [1,4,7], [2,5,8], [0,1,2], 
+#        [3,4,5], [6,7,8], [0,4,8], [2,4,6]]
 #      Board                Index
 # 1  |  2  |   3       0  |  1  |  2
 # 4  |  5  |   6       3  |  4  |  5
 # 7  |  8  |   9       6  |  7  |  8
 
-def board
-  ['1','2','3','4','5','6','7','8','9']
-end
+##board
+
+#def bot_choice(board, configuration)
+#  config = configuration[1]
+#  case 
+#  when config == 1 #Easy Mode
+#    win_options(board,configuration)
+#  when config == 2 #Normal mode
+#    win_options(board, configuration)
+#  when config == 3 #Hard mode
+#    win_options(board, configuration)
+#  when config == 4 #Nightmare mode
+#    #do Nightmare stuff
+#  end
+#end
+
 
 def bot_choice(board, configuration)
-  if configuration[1] == 1
-    #'Easy mode'
-    board.reject {|space| space.to_i == 0}.shuffle.first
-  elsif configuration[1] == 2
-    #'Normal mode'
-    #do stuff
-  elsif configuration[1] == 3
-    #'Hard mode'
-    #do stuff
-  elsif configuration[1] == 4
-    #'Nightmare mode'
-    #do Nightmare stuff
+  config = configuration[1]
+  available_moves = board.reject {|spot| spot.to_i == 0} 
+  if config == 1 ######## Easy Mode #########
+    pick_move
+  elsif config == 2 ######## Normal Mode #######
+    WINS.any? do |a,b,c|
+      if board[a] == board[b] || board[a] == board[c] || board[c] == board[b]
+        return board[c] if board[a] == board[b]
+        return board[b] if board[a] == board[c]
+        return board[a] if board[c] == board[b]
+      end
+    end
+    available_moves.shuffle.first
+  elsif config == 3 ######## Hard Mode #########
+    WINS.any? do |a,b,c|
+      if board[a] == board[b] || board[a] == board[c] || board[c] == board[b]
+        return board[c] if board[a] == board[b]
+        return board[b] if board[a] == board[c]
+        return board[a] if board[c] == board[b]
+      end
+    end
+    #WINS.
+  else  ########  Nightmare Mode  ############
+    #do nightmare stuff
+    
   end
 end
 
 def winner?(board)
   WINS.any? do |a,b,c|
     if board[a] == board[b] && board[b] == board[c]
-      board[a]
-    else 
-      break
+      return board[a]
     end
   end
 end
@@ -173,17 +205,50 @@ def play_game(board)
     choose_square(board, player1, configuration, count)
     count += 1
     refresh_screen(board)
-    break if winner?(board)
-    break if finished?(board)
+    break if winner?(board) || finished?(board)
+    binding.pry
     choose_square(board, player2, configuration, count)
     count += 1
     refresh_screen(board)
   end
+
   if winner?(board) == "X" || winner?(board) == "O"
     puts "congradulations player #{winner?(board)}, you win"
   else
     puts "its a draw"
   end
 end
+#open board spots --- board.map {|spot| spot.scan(/\d/)}.flatten
+#WINS = [[0,3,6], [1,4,7], [2,5,8], [0,1,2], 
+#        [3,4,5], [6,7,8], [0,4,8], [2,4,6]]
+#      Board                Index
+# 1  |  2  |   3       0  |  1  |  2
+# 4  |  5  |   6       3  |  4  |  5
+# 7  |  8  |   9       6  |  7  |  8
+def board
+  ['1','O','3','X','5','O','7','X','9']
+end
 
-play_game(board)
+def find_corners(picks)
+  if picks.include?([0,6,2,8])
+  end
+end
+
+counts = Hash.new(0)
+win_num_count = WINS.flatten
+board.each {|sqr| counts[sqr] += 1 unless sqr == 'X' || sqr == 'O'}
+p counts
+board_remain = board.map {|spot| spot.scan(/\d/)}.flatten
+p board_remain
+x = WINS
+x.reject do |ary| 
+  board_remain.each do |num|
+  end
+end
+
+#play_game(board)
+
+
+
+
+
