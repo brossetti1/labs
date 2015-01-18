@@ -1,8 +1,7 @@
 require 'pry'
-require_relative 'game_art'
+require './game_art'
 
 ######
-#
 #
 #  Tick-Tac-Toe Day 4 for IronYard Spring Jan 08, 2015
 #
@@ -28,8 +27,7 @@ require_relative 'game_art'
 #  
 #  Add better AI (hardcoding "if the board is this, play this" is tractable, but there are other approaches, depending on how nightmarish you want to go).
 #  #  Write your own NATO alphabet.There should be a function to encode and decode.The 
-#  * Running `ruby tic-tac-toe.rb` should play a game of tic-tac-toe in the terminal.
-#  
+#  * Running `ruby tic-tac-toe.rb` should play a game of tic-tac-toe in the terminal.  
 #
 ######
 
@@ -74,18 +72,9 @@ def key_down_any_button
   end
 end
 
-def prompt(text, options, error_msg, keep_text=false)
-  center(text)
-  query_user = gets.chomp
 
-  until query_user =~ /^[#{options.join}]$/i
-    center(error_msg)
-    query_user = gets.chomp
-  end
-  keep_text ? query_user : query_user.to_i
-end
 
-def refresh_screen(board)(board)
+def refresh_screen(board)
   puts `clear`
   game_title
   puts "\n\n\n\n"
@@ -156,7 +145,7 @@ def bot_choice(board, configuration)
   config = configuration[1]
   available_moves = board.reject {|spot| spot.to_i == 0} 
   if config == 1 ######## Easy Mode #########
-    pick_move
+    available_moves.sample
   elsif config == 2 ######## Normal Mode #######
     WINS.any? do |a,b,c|
       if board[a] == board[b] || board[a] == board[c] || board[c] == board[b]
